@@ -1,11 +1,12 @@
 import socket
 
-sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-sock.connect(('127.0.0.1', 9090))
-sock.send(str.encode('hi'))
+client_socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+client_socket.connect(('192.168.0.105', '5050'))
+connection_msg = '< ' + 'Ubuntu' + ' connected >'
+client_socket.sendall(str.encode(connection_msg))
 
-data = sock.recv(1024)
+data = client_socket.recv(1024)
 data = bytes.decode(data)
-sock.close()
+client_socket.close()
 
 print(data)
