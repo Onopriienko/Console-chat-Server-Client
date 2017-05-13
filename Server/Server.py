@@ -4,10 +4,18 @@ server_socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 server_socket.bind(('192.168.0.105', 5050))
 print('Server > 192.168.0.105 : 5050')
 
+clients = []
+
 while True:
-    data = conn.recv(1024)
-    print(data)
-    if not data:
-        break
-    conn.send(data)
-conn.close()
+    data, addr = server_socket.recvfrom(1024)
+
+    if addr not in clients:
+        clients.append(addr)
+
+      # Обработка информации
+    print(data.decode('utf-8'))
+
+    for client in clients:
+        server_socket.sendto(data, client)
+
+server_socket.close()
