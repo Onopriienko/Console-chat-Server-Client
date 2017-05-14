@@ -3,11 +3,12 @@ import socket
 client_socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 client_socket.connect(('192.168.0.105', 55555))
 connection_msg = '< ' + 'Ubuntu' + ' connected >'
+name = input('Enter your name: ')
 #client_socket.sendall(str.encode(connection_msg))
 
 while True:
-    msg = input('Ch: ')
-    client_socket.sendall(str.encode(msg))
+    msg = input(name + ': ')
+    client_socket.sendall(str.encode(name) + b': ' + str.encode(msg))
     data = client_socket.recv(1024)
 
     # обработка информации

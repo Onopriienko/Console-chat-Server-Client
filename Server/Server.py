@@ -1,7 +1,7 @@
 import socket
 
 server_socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-server_socket.bind(('192.168.0.105', 55555))
+server_socket.bind(('0.0.0.0', 55555))
 #print('Server > 192.168.0.105 : 5050')
 
 clients = []
@@ -15,7 +15,10 @@ while True:
       # Обработка информации
     print(data.decode('utf-8'))
 
+
     for client in clients:
         server_socket.sendto(data, client)
+
+
 
 server_socket.close()
