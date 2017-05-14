@@ -4,7 +4,7 @@ server_socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 server_socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
 server_socket.setsockopt(socket.SOL_SOCKET, socket.SO_BROADCAST, 1)
 server_socket.bind(('0.0.0.0', 55555))
-#print('Server > 192.168.0.105 : 5050')
+print('< Server port > 55555')
 
 clients = []
 
@@ -14,11 +14,12 @@ while True:
     if addr not in clients:
         clients.append(addr)
 
-      # Обработка информации
+    # обработка информации
     print(data.decode('utf-8'))
 
 
     for client in clients:
+         # if addr != client:
         server_socket.sendto(data, client)
 
 
