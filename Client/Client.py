@@ -1,6 +1,7 @@
 import socket
 
 client_socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+client_socket.setsockopt(socket.SOL_SOCKET, socket.SO_BROADCAST, 1)
 client_socket.connect(('192.168.0.105', 55555))
 connection_msg = '< ' + 'Ubuntu' + ' connected >'
 name = input('Enter your name: ')
