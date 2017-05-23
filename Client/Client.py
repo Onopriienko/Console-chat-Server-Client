@@ -18,7 +18,7 @@ while True:
     # обработка информации
     # print(data.decode('utf-8'))
 
-    if not msg:
+    if not msg or msg == 'bye':
         break
 
 
