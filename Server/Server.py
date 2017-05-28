@@ -6,7 +6,7 @@ server_socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
 server_socket.setsockopt(socket.SOL_SOCKET, socket.SO_BROADCAST, 1)
 server_socket.bind(('0.0.0.0', 5555))
 server_socket.listen(10)
-print('< Server port > 55555')
+print('< Server port > 5555')
 
 SOCKET_LIST = []
 SOCKET_LIST.append(server_socket)
@@ -25,10 +25,8 @@ def broadcast(server_socket, sock, message):
 while True:
     ready_to_read, ready_to_write, in_error = select.select(SOCKET_LIST, [], [], 0)
     for sock in ready_to_read:
-        print('a',ready_to_read)
         if sock == server_socket:
             sockfd, addr = server_socket.accept()
-            print('b',addr)
             SOCKET_LIST.append(sockfd)
             print("Client (%s, %s) connected" % addr)
             broadcast(server_socket, sockfd, "[%s:%s] entered our chatting room\n" % addr)
