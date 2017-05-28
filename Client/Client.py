@@ -18,7 +18,7 @@ while True:
     for sock in read_sockets:
         if sock == client_socket:
             data = sock.recv(4096)
-            if not data:
+            if not data or sys.stdin == 'exit':
                 print('\nDisconnected from chat server')
                 sys.exit()
             else:
