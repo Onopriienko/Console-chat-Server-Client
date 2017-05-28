@@ -40,9 +40,9 @@ while True:
                 else:
                     if sock in SOCKET_LIST:
                         SOCKET_LIST.remove(sock)
-                    broadcast(server_socket, sock, "fClient (%s, %s) is offline\n" % addr)
+                    broadcast(server_socket, sock, "Client (%s, %s) is offline\n" % addr)
             except:
-                 broadcast(server_socket, sock, "gClient (%s, %s) is offline\n" % addr)
+                 broadcast(server_socket, sock, "Client (%s, %s) is offline\n" % addr)
                  continue
 
 
