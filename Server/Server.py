@@ -1,58 +1,53 @@
 import socket
-from threading import Thread
+import select
 
 server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 server_socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
 server_socket.setsockopt(socket.SOL_SOCKET, socket.SO_BROADCAST, 1)
-server_socket.bind(('0.0.0.0', 55566))
+server_socket.bind(('0.0.0.0', 5555))
 server_socket.listen(10)
 print('< Server port > 55555')
 
-clients = []
-#recvData = []
+SOCKET_LIST = []
+SOCKET_LIST.append(server_socket)
 
 
-class TalkToClient(Thread):
-    def __init__(self, client_sock, client_addr):
-        Thread.__init__(self)
-        self.client_sock = client_sock
-        self.client_addr = client_addr
-        print(self.client_addr)
-
-    def run(self):
-        while True:
-            rec_data = self.client_sock.recv(1024)
-            for n in clients:
-                #print(n)
-                if n != self.client_addr:
-                    print(n)
-                    print(self.client_addr)
-                    self.client_sock.sendto(rec_data, n)
-            '''
-            if not rec_data:
-                self.client_sock.send(b'bye')
-                break
-            print(rec_data)
-            for client in clients:
-                self.client_sock.sendto(rec_data, client)
-            '''
-
-
+def broadcast(server_socket, sock, message):
+    for socket in SOCKET_LIST:
+        if socket != server_socket and socket != sock:
+            try:
+                socket.send(message.encode('utf-8'))
+            except:
+                socket.close()
+                if socket in SOCKET_LIST:
+                    SOCKET_LIST.remove(socket)
 
 while True:
-    sock, addr = server_socket.accept()
+    ready_to_read, ready_to_write, in_error = select.select(SOCKET_LIST, [], [], 0)
+    for sock in ready_to_read:
+        print('a',ready_to_read)
+        if sock == server_socket:
+            sockfd, addr = server_socket.accept()
+            print('b',addr)
+            SOCKET_LIST.append(sockfd)
+            print("Client (%s, %s) connected" % addr)
+            broadcast(server_socket, sockfd, "[%s:%s] entered our chatting room\n" % addr)
+        else:
+            try:
+                data = sock.recv(4096)
+                if data:
+                    broadcast(server_socket, sock, data.decode('utf-8'))
+                else:
+                    if sock in SOCKET_LIST:
+                        SOCKET_LIST.remove(sock)
+                    broadcast(server_socket, sock, "fClient (%s, %s) is offline\n" % addr)
+            except:
+                 broadcast(server_socket, sock, "gClient (%s, %s) is offline\n" % addr)
+                 continue
 
-    if addr not in clients:
-        clients.append(addr)
-    #print(sock)
-    #print(addr)
-    #print(clients)
-
-    #for client in clients:
-        #print(client, b'<')
-    TalkToClient(sock, addr).start()
-        #sock.sendto(rec_data, clients)
-        #if addr != client:
-        #server_socket.sendto(data, client)
 
 server_socket.close()
+
+
+
+

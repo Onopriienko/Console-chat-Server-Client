@@ -1,29 +1,27 @@
 import socket
+import sys
+import select
 
 client_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 client_socket.setsockopt(socket.SOL_SOCKET, socket.SO_BROADCAST, 1)
-client_socket.connect(('127.0.0.1', 55566))
+client_socket.connect(('127.0.0.1', 5555))
 name = input('Enter your name: ')
-#connection_msg = '< ' + name + ' connected >'
-#client_socket.sendall(str.encode(connection_msg))
-
-
+client_socket.settimeout(2)
 
 while True:
-    msg = input(name + ': ')
-    client_socket.sendall(str.encode(name) + b': ' + str.encode(msg))
+    socket_list = [sys.stdin, client_socket]
+    read_sockets, write_sockets, error_sockets = select.select(socket_list, [], [])
 
-    # обработка информации
-    # print(data.decode('utf-8'))
-
-    if not msg or msg == 'bye':
-        break
-    data = client_socket.recv(1024)
-    print(data.decode('utf-8'))
-
-
-client_socket.close()
-
-
-
-
+    for sock in read_sockets:
+        if sock == client_socket:
+            data = sock.recv(4096)
+            if not data:
+                print('\nDisconnected from chat server')
+                sys.exit()
+            else:
+                print(data.decode('utf-8'))
+                print(name, ':')
+        else:
+            msg = sys.stdin.readline()
+            client_socket.send(name.encode('utf-8')+b': '+msg.encode('utf-8'))
+            print(name, ':')
