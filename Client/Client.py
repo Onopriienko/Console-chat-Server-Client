@@ -6,7 +6,7 @@ client_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 client_socket.setsockopt(socket.SOL_SOCKET, socket.SO_BROADCAST, 1)
 client_socket.connect(('127.0.0.1', 5555))
 name = input('Enter your name: ')
-client_socket.settimeout(2)
+#client_socket.settimeout(2)
 
 print('Connected to remote host. You can start sending messages')
 print(name + ': ')
@@ -28,6 +28,3 @@ while True:
             msg = sys.stdin.readline()
             client_socket.send(name.encode('utf-8') + b': ' + msg.encode('utf-8'))
             print(name, ': ')
-
-
-

@@ -43,6 +43,7 @@ while True:
                  broadcast(server_socket, sock, "Client (%s, %s) is offline\n" % addr)
                  continue
 
+
 server_socket.close()
 
 
