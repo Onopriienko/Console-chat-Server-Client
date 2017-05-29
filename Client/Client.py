@@ -9,7 +9,7 @@ name = input('Enter your name: ')
 client_socket.settimeout(2)
 
 print('Connected to remote host. You can start sending messages')
-sys.stdout.write(name + ': ' + '\n')
+print(name + ': ')
 
 while True:
     socket_list = [sys.stdin, client_socket]
@@ -26,7 +26,6 @@ while True:
                 print(name, ': ')
         else:
             msg = sys.stdin.readline()
-            print(msg)
             client_socket.send(name.encode('utf-8') + b': ' + msg.encode('utf-8'))
             print(name, ': ')
 
