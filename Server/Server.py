@@ -45,7 +45,7 @@ while True:
             sockfd, addr = server_socket.accept()
             SOCKET_LIST.append(sockfd)
             print("Client (%s, %s) connected" % addr)
-            broadcast(server_socket, sockfd, "[%s:%s] entered our chatting room\n" % addr)
+            broadcast(server_socket, sockfd, '\r' + "[%s:%s] entered our chatting room\n" % addr)
         else:
             try:
                 data = sock.recv(4096)
