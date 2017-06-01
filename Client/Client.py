@@ -2,8 +2,8 @@ import socket
 import sys
 import select
 
-host = '127.0.0.1'
-port = 5555
+HOST = '127.0.0.1'
+PORT = 7878
 
 
 def close_chat():
@@ -19,13 +19,15 @@ except socket.error:
     close_chat()
 
 try:
-    client_socket.connect((host, port))
+    client_socket.connect((HOST, PORT))
 except socket.error:
     print('Connection to server failed')
     close_chat()
 
 name = input('Enter your name: ')
-print('Connected to remote host. You can start sending messages', '\n' + name + ': ')
+print('Connected to remote host. You can start sending messages', '\n')
+sys.stdout.write('Me: ')
+sys.stdout.flush()
 
 
 while True:
@@ -38,8 +40,9 @@ while True:
             if not data:
                 close_chat()
             else:
-                print(data.decode('utf-8'))
-                print(name, ': ')
+                sys.stdout.write(data.decode('utf-8'))
+                sys.stdout.write('Me: ')
+                sys.stdout.flush()
         else:
             msg = sys.stdin.readline()
             if msg.strip('\n') in ['q', 'quit', 'exit']:
@@ -47,7 +50,8 @@ while True:
             else:
                 try:
                     client_socket.send(name.encode('utf-8') + b': ' + msg.encode('utf-8'))
-                    print(name, ': ')
+                    sys.stdout.write('Me: ')
+                    sys.stdout.flush()
                 except socket.error:
                     print('Send failed')
                     close_chat()

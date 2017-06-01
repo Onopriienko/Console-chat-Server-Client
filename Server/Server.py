@@ -1,14 +1,30 @@
 import socket
 import select
+import sys
 
-server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-server_socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
-server_socket.setsockopt(socket.SOL_SOCKET, socket.SO_BROADCAST, 1)
-server_socket.bind(('0.0.0.0', 5555))
-server_socket.listen(10)
-print('< Server port > 5555')
-
+HOST = '0.0.0.0'
+PORT = 7878
+MAXCLIENT = 20
 SOCKET_LIST = []
+
+
+try:
+    server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    server_socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+    server_socket.setsockopt(socket.SOL_SOCKET, socket.SO_BROADCAST, 1)
+except socket.error:
+    print('Failed to create socket.')
+    sys.exit()
+
+try:
+    server_socket.bind((HOST, PORT))
+except socket.error:
+    print('Bind failed.')
+    sys.exit()
+
+server_socket.listen(MAXCLIENT)
+print('< Server port > ', PORT)
+
 SOCKET_LIST.append(server_socket)
 
 
@@ -34,7 +50,7 @@ while True:
             try:
                 data = sock.recv(4096)
                 if data:
-                    broadcast(server_socket, sock, data.decode('utf-8'))
+                    broadcast(server_socket, sock, '\r' + data.decode('utf-8'))
                 else:
                     if sock in SOCKET_LIST:
                         SOCKET_LIST.remove(sock)
@@ -43,9 +59,4 @@ while True:
                  broadcast(server_socket, sock, "Client (%s, %s) is offline\n" % addr)
                  continue
 
-
 server_socket.close()
-
-
-
-
